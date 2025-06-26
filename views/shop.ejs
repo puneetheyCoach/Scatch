@@ -1,0 +1,147 @@
+<%- include('./partials/header') %>
+
+<!-- Profile Icon Dropdown (Top Right) -->
+<div class="absolute top-5 right-5 z-50">
+  <div class="relative inline-block text-left">
+    <!-- Toggle Button -->
+    <button
+      id="profileDropdownButton"
+      class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-100 focus:outline-none"
+    >
+      <i class="ri-user-3-line text-xl"></i>
+    </button>
+
+    <!-- Dropdown Menu -->
+    <div
+      id="profileDropdownMenu"
+      class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg"
+    >
+      <a
+        href="/owners/admin"
+        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+        >Admin</a
+      >
+      <a
+        href="/users/logout"
+        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+        >Logout</a
+      >
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Main Content -->
+<div class="w-full min-h-screen flex px-10 py-16 bg-gray-50">
+  <!-- Sidebar -->
+  <div class="w-[25%] h-full pr-8 border-r border-gray-200">
+    <!-- Sorting Section -->
+    <div class="mb-12">
+      <h2 class="text-lg font-semibold mb-3">Sort By</h2>
+      <form action="/shop">
+        <select
+          name="sortby"
+          class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-400"
+        >
+          <option value="popular">Popular</option>
+          <option value="newest">Newest</option>
+        </select>
+      </form>
+    </div>
+
+    <!-- Collection Links -->
+    <div class="mb-12">
+      <h2 class="text-lg font-semibold mb-3">Browse</h2>
+      <nav class="flex flex-col gap-2 text-gray-700">
+        <a class="hover:text-blue-600 transition" href="/shop">New Collection</a>
+        <a class="hover:text-blue-600 transition" href="/shop">All Products</a>
+        <a
+          class="hover:text-blue-600 transition"
+          href="/shop/discount"
+        >Discounted Products</a>
+      </nav>
+    </div>
+
+    <!-- Discount Filter -->
+    <div class="mb-12">
+      <h2 class="text-lg font-semibold mb-3">Filter by Discount</h2>
+      <select
+        onchange="handleDiscountChange(this.value)"
+        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-400"
+      >
+        <option value="">-- Select Discount --</option>
+        <option value="lt50">Less than 50%</option>
+        <option value="gt50">Greater than 50%</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Product Grid -->
+  <div class="w-[75%] pl-8">
+    <% if (products && products.length > 0) { %>
+    <div class="grid grid-cols-3 gap-6">
+      <% products.forEach(function(product){ %>
+      <div class="bg-white rounded-md shadow-sm overflow-hidden">
+        <div
+          class="w-full h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]"
+        >
+          <img
+            class="h-[12rem]"
+            src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
+            alt="<%= product.name %>"
+          />
+        </div>
+        <div
+          class="flex justify-between items-center px-4 py-4 bg-[<%= product.panelcolor %>] text-[<%= product.textcolor %>]"
+        >
+          <div>
+            <h3 class="font-semibold"><%= product.name %></h3>
+            <h4 class="text-sm">
+              ₹ <%= product.price %>
+              <% if (product.discount > 0) { %>
+              (-<%= product.discount %>%)
+              <% } %>
+            </h4>
+          </div>
+          <a
+            class="w-7 h-7 flex items-center justify-center rounded-full bg-black text-white"
+            href="#"
+          >
+            <i class="ri-add-line"></i>
+          </a>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <% } else { %>
+    <p class="text-gray-500">No products found.</p>
+    <% } %>
+  </div>
+</div>
+
+<script>
+  const button = document.getElementById("profileDropdownButton");
+  const menu = document.getElementById("profileDropdownMenu");
+
+  button.addEventListener("click", () => {
+    menu.classList.toggle("hidden");
+  });
+
+  // Close the dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!button.contains(e.target) && !menu.contains(e.target)) {
+      menu.classList.add("hidden");
+    }
+  });
+
+  function handleDiscountChange(value) {
+    if (value === "lt50") {
+      window.location.href = "/shop/discount/lt50";
+    } else if (value === "gt50") {
+      window.location.href = "/shop/discount/gt50";
+    }
+  }
+</script>
+
+<%- include('./partials/footer') %>
